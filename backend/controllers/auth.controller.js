@@ -7,22 +7,22 @@ export const signup = async (req, res) => {
         const { fullName, username, email, password } = req.body;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            return res.status(400).json({ error: "Invalid email format" })
+            return res.status(400).json({ error: "Formato de correo invalido." })
         }
 
         const exitingUser = await User.findOne({ username });
         if (exitingUser) {
-            return res.status(400).json({ error: "User already exists" })
+            return res.status(400).json({ error: "El nombre de usuario ya exite." })
         }
 
         const exitingEmail = await User.findOne({ email });
         if (exitingEmail) {
-            return res.status(400).json({ error: "Email already exists" })
+            return res.status(400).json({ error: "El correo electronico ya exite." })
         }
 
         //password user
         if (password.length < 6) {
-            return res.status(400).json({ error: "La contraseña debe tener mas de 6 caracteres" })
+            return res.status(400).json({ error: "La contraseña debe tener mas de 6 caracteres." })
         }
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
@@ -60,31 +60,32 @@ export const signup = async (req, res) => {
 
 
 export const login = async (req, res) => {
-    try {
-        const { username, password } = req.body;
-        const user = await User.findOne({ username })
-        const isPasswordCorrect = await bcrypt.compare(password, user?.password || "")
+	try {
+		const { username, password } = req.body;
+		const user = await User.findOne({ username });
+		const isPasswordCorrect = await bcrypt.compare(password, user?.password || "");
 
-        if (!user || !isPasswordCorrect) {
-            return res.status(400).json({ error: "Usuario o contraseña incorrectos" })
-        }
+		if (!user || !isPasswordCorrect) {
+			return res.status(400).json({ error: "Usuario o contraseña incorrectos." });
+		}
 
-        generateTokenAndSetCookie(user._id, res)
-        res.status(200).json({
-            _id: user._id,
-            fullName: user.fullName,
-            username: user.username,
-            email: user.email,
-            followers: user.followers,
-            following: user.following,
-            profileImg: user.profileImg,
-            coverImg: user.coverImg,
-        })
-    } catch (error) {
-        console.log("Error in login controller", error.message);
-        res.status(500).json({ error: "Internal Server Error!" });
-    }
-}
+		generateTokenAndSetCookie(user._id, res);
+
+		res.status(200).json({
+			_id: user._id,
+			fullName: user.fullName,
+			username: user.username,
+			email: user.email,
+			followers: user.followers,
+			following: user.following,
+			profileImg: user.profileImg,
+			coverImg: user.coverImg,
+		});
+	} catch (error) {
+		console.log("Error in login controller", error.message);
+		res.status(500).json({ error: "Internal Server Error" });
+	}
+};
 
 
 

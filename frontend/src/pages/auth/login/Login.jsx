@@ -2,19 +2,21 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import XSvg from "../../../components/svgs/X";
-import { MdPassword } from "react-icons/md";
-import { FaUser } from "react-icons/fa";
 
-//import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { MdOutlineMail } from "react-icons/md";
+import { MdPassword } from "react-icons/md";
+
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const Login = () => {
 	const [formData, setFormData] = useState({
 		username: "",
 		password: "",
 	});
-	//const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 
-	/*const {
+	const {
 		mutate: loginMutation,
 		isPending,
 		isError,
@@ -42,13 +44,13 @@ const Login = () => {
 		onSuccess: () => {
 			// refetch the authUser
 			queryClient.invalidateQueries({ queryKey: ["authUser"] });
+			toast.success("Bienvendo")
 		},
-	});*/
+	});
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-    console.log(formData)
-		//loginMutation(formData);
+		loginMutation(formData);
 	};
 
 	const handleInputChange = (e) => {
@@ -63,13 +65,13 @@ const Login = () => {
 			<div className='flex-1 flex flex-col justify-center items-center'>
 				<form className='flex gap-4 flex-col' onSubmit={handleSubmit}>
 					<XSvg className='w-24 lg:hidden fill-white' />
-					<h1 className='text-4xl font-extrabold text-white'>{'¡Nos vemos de nuevo!'}</h1>
+					<h1 className='text-4xl font-extrabold text-white'>{"Nos gusta verte de nuevo"}.</h1>
 					<label className='input input-bordered rounded flex items-center gap-2'>
-						<FaUser  />
+						<MdOutlineMail />
 						<input
 							type='text'
 							className='grow'
-							placeholder='Usuario'
+							placeholder='username'
 							name='username'
 							onChange={handleInputChange}
 							value={formData.username}
@@ -81,21 +83,21 @@ const Login = () => {
 						<input
 							type='password'
 							className='grow'
-							placeholder='Contraseña'
+							placeholder='Password'
 							name='password'
 							onChange={handleInputChange}
 							value={formData.password}
 						/>
 					</label>
 					<button className='btn rounded-full btn-primary text-white'>
-						Iniciar sesion
+						{isPending ? "Loading..." : "Login"}
 					</button>
-					
+					{isError && <p className='text-red-500'>{error.message}</p>}
 				</form>
 				<div className='flex flex-col gap-2 mt-4'>
-					<p className='text-white text-lg'>{'¿No'} tienes una cuenta?</p>
+					<p className='text-white text-lg'>{"Don't"} have an account?</p>
 					<Link to='/signup'>
-						<button className='btn rounded-full btn-primary text-white btn-outline w-full'>Registrarme</button>
+						<button className='btn rounded-full btn-primary text-white btn-outline w-full'>Sign up</button>
 					</Link>
 				</div>
 			</div>
